@@ -1,5 +1,7 @@
 package br.com.bpsistemas.cursomc.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,11 @@ public class CategoriaService {
 			repo.delete(find(id));
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possivel excluir uma categoria que possui produtos");
-		}
-		
+		}		
+	}
+	
+	public List<Categoria> findAll() {
+		return repo.findAll();
 	}
 	
 }

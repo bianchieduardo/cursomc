@@ -7,8 +7,8 @@ import org.springframework.mail.SimpleMailMessage;
 
 import br.com.bpsistemas.cursomc.domain.Pedido;
 
-public abstract class AbstractMailService implements EmailService {
-
+public abstract class AbstractEmailService implements EmailService {
+	
 	@Value("${default.sender}")
 	private String sender;
 	
@@ -27,5 +27,4 @@ public abstract class AbstractMailService implements EmailService {
 		sm.setText(obj.toString());
 		return sm;
 	}
-	
 }

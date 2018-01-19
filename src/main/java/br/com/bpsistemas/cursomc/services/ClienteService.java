@@ -26,20 +26,22 @@ public class ClienteService {
 	
 	@Autowired
 	private ClienteRepository repo;
+	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-
-	public Cliente find(Integer id) {
-		 Cliente obj = repo.findOne(id);		 
-		 if(obj == null) {
-			 throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id
-					 +", Tipo: " + Cliente.class.getName());
-		 }
-		 return obj;
-	}
 	
+	public Cliente find(Integer id) {
+		Cliente obj = repo.findOne(id);
+		if (obj == null) {
+			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id
+					+ ", Tipo: " + Cliente.class.getName());
+		}
+		return obj;
+	}
+
 	public Cliente insert(Cliente obj) {
 		obj.setId(null);
 		obj = repo.save(obj);
@@ -52,13 +54,15 @@ public class ClienteService {
 		updateData(newObj, obj);
 		return repo.save(newObj);
 	}
-	
-	public void delete(Integer id) {	
+
+	public void delete(Integer id) {
+		find(id);
 		try {
-			repo.delete(find(id));
-		} catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possivel excluir porque há entidades relacionadas");
-		}		
+			repo.delete(id);
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível excluir porque há pedidos relacionados");
+		}
 	}
 	
 	public List<Cliente> findAll() {
@@ -67,31 +71,31 @@ public class ClienteService {
 	
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repo.findAll(pageRequest);		
+		return repo.findAll(pageRequest);
 	}
 	
 	public Cliente fromDTO(ClienteDTO objDto) {
 		return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null);
 	}
-	
+
 	public Cliente fromDTO(ClienteNewDTO objDto) {
-		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),TipoCliente.toEnum(objDto.getTipo()) );
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()));
 		Cidade cid = cidadeRepository.findOne(objDto.getCidadeId());
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
 		cli.getEnderecos().add(end);
 		cli.getTelefones().add(objDto.getTelefone1());
-		if(objDto.getTelefone2()!= null) {
+		if (objDto.getTelefone2()!=null) {
 			cli.getTelefones().add(objDto.getTelefone2());
 		}
-		if(objDto.getTelefone3()!= null) {
+		if (objDto.getTelefone3()!=null) {
 			cli.getTelefones().add(objDto.getTelefone3());
 		}
 		return cli;
 	}
+
 	
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
-	
 }

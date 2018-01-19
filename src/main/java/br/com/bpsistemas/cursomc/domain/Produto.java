@@ -18,12 +18,12 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Produto implements Serializable{
+public class Produto  implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;	
+	private Integer id;
 	private String nome;
 	private Double preco;
 	
@@ -39,7 +39,7 @@ public class Produto implements Serializable{
 	@OneToMany(mappedBy="id.produto")
 	private Set<ItemPedido> itens = new HashSet<>();
 	
-	public Produto() {		
+	public Produto() {
 	}
 
 	public Produto(Integer id, String nome, Double preco) {
@@ -50,13 +50,14 @@ public class Produto implements Serializable{
 	}
 
 	@JsonIgnore
-	public List<Pedido> getPedidos(){
+	public List<Pedido> getPedidos() {
 		List<Pedido> lista = new ArrayList<>();
 		for (ItemPedido x : itens) {
 			lista.add(x.getPedido());
 		}
 		return lista;
 	}
+	
 	
 	public Integer getId() {
 		return id;
@@ -97,7 +98,7 @@ public class Produto implements Serializable{
 	public void setItens(Set<ItemPedido> itens) {
 		this.itens = itens;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -123,5 +124,5 @@ public class Produto implements Serializable{
 		return true;
 	}
 	
-	
+
 }

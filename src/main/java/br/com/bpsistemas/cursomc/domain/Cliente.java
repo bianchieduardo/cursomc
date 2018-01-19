@@ -21,20 +21,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.com.bpsistemas.cursomc.domain.enums.TipoCliente;
 
 @Entity
-public class Cliente implements Serializable{
+public class Cliente implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
-	
 	private String nome;
 	
 	@Column(unique=true)
 	private String email;
-	
-	private String cpfOucnpj;
-	
+	private String cpfOuCnpj;
 	private Integer tipo;
 	
 	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
@@ -51,12 +48,12 @@ public class Cliente implements Serializable{
 	public Cliente() {
 	}
 
-	public Cliente(Integer id, String nome, String email, String cpfOucnpj, TipoCliente tipo) {
+	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
-		this.cpfOucnpj = cpfOucnpj;
+		this.cpfOuCnpj = cpfOuCnpj;
 		this.tipo = (tipo==null) ? null : tipo.getCod();
 	}
 
@@ -84,12 +81,12 @@ public class Cliente implements Serializable{
 		this.email = email;
 	}
 
-	public String getCpfOucnpj() {
-		return cpfOucnpj;
+	public String getCpfOuCnpj() {
+		return cpfOuCnpj;
 	}
 
-	public void setCpfOucnpj(String cpfOucnpj) {
-		this.cpfOucnpj = cpfOucnpj;
+	public void setCpfOuCnpj(String cpfOuCnpj) {
+		this.cpfOuCnpj = cpfOuCnpj;
 	}
 
 	public TipoCliente getTipo() {
@@ -123,7 +120,7 @@ public class Cliente implements Serializable{
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -147,7 +144,6 @@ public class Cliente implements Serializable{
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
+	}	
 
-	
 }

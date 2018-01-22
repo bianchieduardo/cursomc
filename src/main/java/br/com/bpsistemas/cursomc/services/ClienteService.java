@@ -13,17 +13,23 @@ import org.springframework.stereotype.Service;
 import br.com.bpsistemas.cursomc.domain.Cidade;
 import br.com.bpsistemas.cursomc.domain.Cliente;
 import br.com.bpsistemas.cursomc.domain.Endereco;
+import br.com.bpsistemas.cursomc.domain.enums.Perfil;
 import br.com.bpsistemas.cursomc.domain.enums.TipoCliente;
 import br.com.bpsistemas.cursomc.dto.ClienteDTO;
 import br.com.bpsistemas.cursomc.dto.ClienteNewDTO;
 import br.com.bpsistemas.cursomc.repositories.CidadeRepository;
 import br.com.bpsistemas.cursomc.repositories.ClienteRepository;
 import br.com.bpsistemas.cursomc.repositories.EnderecoRepository;
+import br.com.bpsistemas.cursomc.security.UserSS;
+import br.com.bpsistemas.cursomc.services.exceptions.AuthorizationException;
 import br.com.bpsistemas.cursomc.services.exceptions.DataIntegrityException;
 import br.com.bpsistemas.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
+	
+	@Autowired
+	private BCryptPasswordEncoder pe;
 	
 	@Autowired
 	private ClienteRepository repo;
@@ -34,10 +40,13 @@ public class ClienteService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
-	@Autowired
-	private BCryptPasswordEncoder pe;
-	
 	public Cliente find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if (user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Cliente obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjectNotFoundException("Objeto não encontrado! Id: " + id
@@ -83,7 +92,7 @@ public class ClienteService {
 	}
 
 	public Cliente fromDTO(ClienteNewDTO objDto) {
-		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()) );
+		Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(), TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
 		Cidade cid = cidadeRepository.findOne(objDto.getCidadeId());
 		Endereco end = new Endereco(null, objDto.getLogradouro(), objDto.getNumero(), objDto.getComplemento(), objDto.getBairro(), objDto.getCep(), cli, cid);
 		cli.getEnderecos().add(end);
